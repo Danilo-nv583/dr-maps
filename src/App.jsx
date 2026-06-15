@@ -237,7 +237,17 @@ function App() {
         ? Math.max(...lotesCargados.map((l) => l.numero)) + 1
         : 1
     );
-    setLoteSeleccionado(null);
+    
+    setLoteSeleccionado((actual) => {
+      if (!actual) return null;
+
+     const actualizado = lotesCargados.find(
+        (lote) => lote.numero === actual.numero
+    );
+
+    return actualizado || actual;
+  });
+
     setPuntosNuevoLote([]);
 
     setTimeout(() => {
