@@ -188,6 +188,8 @@ function App() {
       numero: lote.numero,
       estado: lote.estado,
       puntos: lote.puntos,
+      area: lote.area || '',
+      precio: lote.precio || '',
     }));
 
     const { error } = await supabase.from('lotes').insert(lotesParaGuardar);
@@ -223,6 +225,8 @@ function App() {
       numero: lote.numero,
       estado: lote.estado,
       puntos: lote.puntos,
+      area: lote.area || '',
+      precio: lote.precio || '',
     }));
 
     cargandoDesdeNubeRef.current = true;
@@ -317,6 +321,8 @@ function App() {
       numero: contador,
       estado: 'libre',
       puntos: puntosNuevoLote,
+      area: '',
+      precio: '',
     };
 
     setLotes([...lotes, nuevo]);
@@ -329,7 +335,10 @@ function App() {
     if (campo !== 'estado' && !puedeEditarTodo) return;
     if (campo === 'estado' && !puedeCambiarEstado) return;
 
-    const valorFinal = campo === 'estado' ? valor : Number(valor);
+    const valorFinal =
+      campo === 'estado' || campo === 'area' || campo === 'precio'
+        ? valor
+        : Number(valor);
 
     const nuevosLotes = lotes.map((lote) =>
       lote.numero === numeroOriginal ? { ...lote, [campo]: valorFinal } : lote
@@ -782,6 +791,53 @@ function App() {
             <p>
               Estado actual: <strong>{loteSeleccionado.estado.toUpperCase()}</strong>
             </p>
+
+           {loteSeleccionado.area && (
+
+            <p>
+               Área: <strong>{loteSeleccionado.area}</strong>
+           </p>
+)}
+
+          {loteSeleccionado.precio && (
+            <p>
+              Precio: <strong>{loteSeleccionado.precio}</strong>
+          </p>
+)}
+
+            {esAdmin && (
+              <>
+                <label>Área / medida del lote</label>
+                <input
+                  type="text"
+                  placeholder="Ejemplo: 250 m² o 10 x 25 m"
+                  value={loteSeleccionado.area || ''}
+                  onChange={(e) =>
+                    actualizarLote(
+                      loteSeleccionado.numero,
+                      'area',
+                      e.target.value
+                    )
+                  }
+                  style={{ width: '100%', marginBottom: 10 }}
+                />
+
+                <label>Precio</label>
+                <input
+                  type="text"
+                  placeholder="Ejemplo: Q150,000"
+                  value={loteSeleccionado.precio || ''}
+                  onChange={(e) =>
+                    actualizarLote(
+                      loteSeleccionado.numero,
+                      'precio',
+                      e.target.value
+                    )
+                  }
+                  style={{ width: '100%', marginBottom: 15 }}
+                />
+              </>
+            )}
 
             {puedeCambiarEstado && (
               <>
