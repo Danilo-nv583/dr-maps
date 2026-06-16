@@ -21,10 +21,7 @@ function App() {
   const [perfil, setPerfil] = useState(null);
   const [mostrarLogin, setMostrarLogin] = useState(false);
 
-  const [proyectos, setProyectos] = useState(() => {
-    const guardados = localStorage.getItem('drmaps-proyectos');
-    return guardados ? JSON.parse(guardados) : proyectosIniciales;
-  });
+  const [proyectos, setProyectos] = useState(proyectosIniciales);
 
   const [proyectoActualId, setProyectoActualId] = useState(() => {
     return localStorage.getItem('drmaps-proyecto-actual') || 'el-tejar';
