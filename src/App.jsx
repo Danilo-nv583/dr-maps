@@ -437,13 +437,16 @@ const areaDisponible = lotes
       [campo]: valorFinal,
     };
 
+    if (campo === 'estado' && valorFinal === 'libre') {
+      actualizado.fecha_reserva = '';
+    }
+
     if (
       campo === 'estado' &&
       valorFinal === 'reservado' &&
       !lote.fecha_reserva
     ) {
-      actualizado.fecha_reserva =
-        new Date().toLocaleDateString();
+      actualizado.fecha_reserva = new Date().toLocaleDateString();
     }
 
     return actualizado;
