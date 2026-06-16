@@ -48,6 +48,8 @@ function App() {
   });
   const [contador, setContador] = useState(1);
 
+  const [busquedaLote, setBusquedaLote] = useState('');
+
   const totalLotes = lotes.length;
 
 const libres = lotes.filter(
@@ -61,6 +63,26 @@ const reservados = lotes.filter(
 const vendidos = lotes.filter(
   (lote) => lote.estado === 'vendido'
 ).length;
+
+function buscarLote() {
+  const numero = Number(busquedaLote);
+
+  if (!numero) {
+    alert('Escribe un número de lote.');
+    return;
+  }
+
+  const lote = lotes.find((l) => l.numero === numero);
+
+  if (!lote) {
+    alert('No se encontró ese lote.');
+    return;
+  }
+
+  setLoteSeleccionado(lote);
+}
+
+
 
 const valorDisponible = lotes
   .filter((lote) => lote.estado === 'libre')
@@ -723,6 +745,38 @@ const areaDisponible = lotes
         🟢 Libre &nbsp;&nbsp; 🟡 Reservado &nbsp;&nbsp; 🔴 Vendido
       </div>
 
+
+        <div style={{ marginBottom: 15 }}>
+  <input
+    type="number"
+    placeholder="Buscar lote..."
+    value={busquedaLote}
+    onChange={(e) => setBusquedaLote(e.target.value)}
+    onKeyDown={(e) => {
+      if (e.key === 'Enter') buscarLote();
+    }}
+    style={{
+      padding: 10,
+      width: 180,
+      borderRadius: 8,
+      border: '1px solid #ccc',
+    }}
+  />
+
+  <button
+    onClick={buscarLote}
+    style={{
+      marginLeft: 8,
+      padding: 10,
+      borderRadius: 8,
+      cursor: 'pointer',
+    }}
+  >
+    🔍 Buscar
+  </button>
+</div>
+
+
       <div
         style={{
           position: 'relative',
@@ -764,8 +818,8 @@ const areaDisponible = lotes
                 <polygon
                   points={puntosTexto(lote.puntos)}
                   fill={colorEstado(lote.estado)}
-                  stroke="#222"
-                  strokeWidth="0.2"
+                  stroke={loteSeleccionado?.numero === lote.numero ? '#0000ff' : '#222'}
+                  strokeWidth={loteSeleccionado?.numero === lote.numero ? '0.8' : '0.2'}
                   onClick={(e) => {
                     e.stopPropagation();
                     setLoteSeleccionado(lote);
