@@ -253,6 +253,8 @@ const areaDisponible = lotes
       precio: lote.precio || '',
       asesor: lote.asesor || '',
       telefono: lote.telefono || '',
+      observaciones: lote.observaciones || '',
+      fecha_reserva: lote.fecha_reserva || '',
     }));
 
     const { error } = await supabase.from('lotes').insert(lotesParaGuardar);
@@ -292,6 +294,8 @@ const areaDisponible = lotes
       precio: lote.precio || '',
       asesor: lote.asesor || '',
       telefono: lote.telefono || '',
+      observaciones: lote.observaciones || '',
+      fecha_reserva: lote.fecha_reserva || '',
     }));
 
     cargandoDesdeNubeRef.current = true;
@@ -400,6 +404,8 @@ const areaDisponible = lotes
       precio: '',
       asesor: '',
       telefono: '',
+      observaciones: '',
+      fecha_reserva: '',
     };
 
     setLotes([...lotes, nuevo]);
@@ -409,30 +415,52 @@ const areaDisponible = lotes
   }
 
   function actualizarLote(numeroOriginal, campo, valor) {
-    if (campo !== 'estado' && !puedeEditarTodo) return;
-    if (campo === 'estado' && !puedeCambiarEstado) return;
+  if (campo !== 'estado' && !puedeEditarTodo) return;
+  if (campo === 'estado' && !puedeCambiarEstado) return;
 
-    const valorFinal =
-      campo === 'estado' ||
-      campo === 'area' ||
-      campo === 'precio' ||
-      campo === 'asesor' ||
-      campo === 'telefono'
-        ? valor
-        : Number(valor);
+  const valorFinal =
+    campo === 'estado' ||
+    campo === 'area' ||
+    campo === 'precio' ||
+    campo === 'asesor' ||
+    campo === 'telefono' ||
+    campo === 'observaciones' ||
+    campo === 'fecha_reserva'
+      ? valor
+      : Number(valor);
 
-    const nuevosLotes = lotes.map((lote) =>
-      lote.numero === numeroOriginal ? { ...lote, [campo]: valorFinal } : lote
-    );
+  const nuevosLotes = lotes.map((lote) => {
+    if (lote.numero !== numeroOriginal) return lote;
 
-    setLotes(nuevosLotes);
+    const actualizado = {
+      ...lote,
+      [campo]: valorFinal,
+    };
 
-    if (campo === 'numero') {
-      setLoteSeleccionado(nuevosLotes.find((l) => l.numero === valorFinal));
-    } else {
-      setLoteSeleccionado(nuevosLotes.find((l) => l.numero === numeroOriginal));
+    if (
+      campo === 'estado' &&
+      valorFinal === 'reservado' &&
+      !lote.fecha_reserva
+    ) {
+      actualizado.fecha_reserva =
+        new Date().toLocaleDateString();
     }
+
+    return actualizado;
+  });
+
+  setLotes(nuevosLotes);
+
+  if (campo === 'numero') {
+    setLoteSeleccionado(
+      nuevosLotes.find((l) => l.numero === valorFinal)
+    );
+  } else {
+    setLoteSeleccionado(
+      nuevosLotes.find((l) => l.numero === numeroOriginal)
+    );
   }
+}
 
   function moverPunto(numero, index, campo, valor) {
     if (!puedeEditarTodo) return;
@@ -979,54 +1007,84 @@ const areaDisponible = lotes
   </a>
 )}
 
+{(esAdmin || esVendedor) && loteSeleccionado.observaciones && (
+  <p>
+    Observaciones: <strong>{loteSeleccionado.observaciones}</strong>
+  </p>
+)}
 
-                {esAdmin && (
-                  <>
-                    <label>Área / medida del lote</label>
-                    <input
-                      type="text"
-                      placeholder="Ejemplo: 250 m² o 10 x 25 m"
-                      value={loteSeleccionado.area || ''}
-                      onChange={(e) =>
-                        actualizarLote(loteSeleccionado.numero, 'area', e.target.value)
-                      }
-                      style={{ width: '100%', marginBottom: 10 }}
-                    />
+{loteSeleccionado.fecha_reserva && (
+  <p>
+    📅 Reservado desde:{' '}
+    <strong>{loteSeleccionado.fecha_reserva}</strong>
+  </p>
+)}
 
-                    <label>Precio</label>
-                    <input
-                      type="text"
-                      placeholder="Ejemplo: Q150,000"
-                      value={loteSeleccionado.precio || ''}
-                      onChange={(e) =>
-                        actualizarLote(loteSeleccionado.numero, 'precio', e.target.value)
-                      }
-                      style={{ width: '100%', marginBottom: 15 }}
-                    />
+                          {esAdmin && (
+            <>
+              <label>Área / medida del lote</label>
+              <input
+                type="text"
+                placeholder="Ejemplo: 250 m² o 10 x 25 m"
+                value={loteSeleccionado.area || ''}
+                onChange={(e) =>
+                  actualizarLote(loteSeleccionado.numero, 'area', e.target.value)
+                }
+                style={{ width: '100%', marginBottom: 10 }}
+              />
 
-                    <label>Asesor</label>
-                    <input
-                      type="text"
-                      placeholder="Ejemplo: Carlos López"
-                      value={loteSeleccionado.asesor || ''}
-                      onChange={(e) =>
-                        actualizarLote(loteSeleccionado.numero, 'asesor', e.target.value)
-                      }
-                      style={{ width: '100%', marginBottom: 10 }}
-                    />
+              <label>Precio</label>
+              <input
+                type="text"
+                placeholder="Ejemplo: Q150,000"
+                value={loteSeleccionado.precio || ''}
+                onChange={(e) =>
+                  actualizarLote(loteSeleccionado.numero, 'precio', e.target.value)
+                }
+                style={{ width: '100%', marginBottom: 15 }}
+              />
 
-                    <label>Teléfono</label>
-                    <input
-                      type="text"
-                      placeholder="Ejemplo: 5555-5555"
-                      value={loteSeleccionado.telefono || ''}
-                      onChange={(e) =>
-                        actualizarLote(loteSeleccionado.numero, 'telefono', e.target.value)
-                      }
-                      style={{ width: '100%', marginBottom: 15 }}
-                    />
-                  </>
-                )}
+              <label>Asesor</label>
+              <input
+                type="text"
+                placeholder="Ejemplo: Carlos López"
+                value={loteSeleccionado.asesor || ''}
+                onChange={(e) =>
+                  actualizarLote(loteSeleccionado.numero, 'asesor', e.target.value)
+                }
+                style={{ width: '100%', marginBottom: 10 }}
+              />
+
+              <label>Teléfono</label>
+              <input
+                type="text"
+                placeholder="Ejemplo: 5555-5555"
+                value={loteSeleccionado.telefono || ''}
+                onChange={(e) =>
+                  actualizarLote(loteSeleccionado.numero, 'telefono', e.target.value)
+                }
+                style={{ width: '100%', marginBottom: 15 }}
+              />
+
+              <label>Observaciones</label>
+              <textarea
+                placeholder="Ejemplo: Cliente interesado, pendiente de papelería..."
+                value={loteSeleccionado.observaciones || ''}
+                onChange={(e) =>
+                  actualizarLote(
+                    loteSeleccionado.numero,
+                    'observaciones',
+                    e.target.value
+                  )
+                }
+                style={{
+                  width: '100%',
+                  marginBottom: 15,
+                  minHeight: 80,
+                }}
+              />
+            </>
+          )}
 
             {puedeCambiarEstado && (
               <>
