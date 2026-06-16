@@ -31,9 +31,12 @@ function App() {
   });
 
   const proyectoActual =
+  
     proyectos.find((p) => p.id === proyectoActualId) || proyectos[0];
 
   const storageKey = `drmaps-lotes-${proyectoActual.id}`;
+
+  
 
   const [modoEditor, setModoEditor] = useState(false);
   const [puntosNuevoLote, setPuntosNuevoLote] = useState([]);
@@ -44,6 +47,42 @@ function App() {
     return guardados ? JSON.parse(guardados) : [];
   });
   const [contador, setContador] = useState(1);
+
+  const totalLotes = lotes.length;
+
+const libres = lotes.filter(
+  (lote) => lote.estado === 'libre'
+).length;
+
+const reservados = lotes.filter(
+  (lote) => lote.estado === 'reservado'
+).length;
+
+const vendidos = lotes.filter(
+  (lote) => lote.estado === 'vendido'
+).length;
+
+const valorDisponible = lotes
+  .filter((lote) => lote.estado === 'libre')
+  .reduce(
+    (total, lote) =>
+      total +
+      Number(
+        String(lote.precio).replace(/[^\d]/g, '') || 0
+      ),
+    0
+  );
+
+const areaDisponible = lotes
+  .filter((lote) => lote.estado === 'libre')
+  .reduce(
+    (total, lote) =>
+      total +
+      Number(
+        String(lote.area).replace(/[^\d.]/g, '') || 0
+      ),
+    0
+  );
 
   const rol = perfil?.rol || 'cliente';
   const esAdmin = rol === 'admin';
@@ -237,7 +276,7 @@ function App() {
         ? Math.max(...lotesCargados.map((l) => l.numero)) + 1
         : 1
     );
-    
+
     setLoteSeleccionado((actual) => {
       if (!actual) return null;
 
@@ -502,6 +541,40 @@ function App() {
 
   return (
     <div style={{ textAlign: 'center', fontFamily: 'Arial', position: 'relative' }}>
+      
+      
+      <div
+      
+  style={{
+    background: '#f5f5f5',
+    padding: 20,
+    borderRadius: 12,
+    marginBottom: 20,
+    marginTop: 20,
+  }}
+>
+  <h2>📊 Resumen del Proyecto</h2>
+
+  <p>🏘️ Total de lotes: {totalLotes}</p>
+
+  <p>🟢 Libres: {libres}</p>
+
+  <p>🟡 Reservados: {reservados}</p>
+
+  <p>🔴 Vendidos: {vendidos}</p>
+
+  <p>
+    💰 Valor disponible: Q
+    {valorDisponible.toLocaleString()}
+  </p>
+
+  <p>
+    📐 Área disponible:
+    {' '}
+    {areaDisponible.toLocaleString()} m²
+  </p>
+</div>
+
       <div style={{ position: 'absolute', top: 15, right: 20 }}>
         {usuario ? (
           <button onClick={cerrarSesion}>
