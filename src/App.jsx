@@ -255,6 +255,7 @@ const areaDisponible = lotes
       telefono: lote.telefono || '',
       observaciones: lote.observaciones || '',
       fecha_reserva: lote.fecha_reserva || '',
+      asesores: lote.asesores || [],
     }));
 
     const { error } = await supabase.from('lotes').insert(lotesParaGuardar);
@@ -296,6 +297,7 @@ const areaDisponible = lotes
       telefono: lote.telefono || '',
       observaciones: lote.observaciones || '',
       fecha_reserva: lote.fecha_reserva || '',
+      asesores: lote.asesores || [],
     }));
 
     cargandoDesdeNubeRef.current = true;
@@ -406,6 +408,7 @@ const areaDisponible = lotes
       telefono: '',
       observaciones: '',
       fecha_reserva: '',
+      asesores: [],
     };
 
     setLotes([...lotes, nuevo]);
@@ -413,6 +416,24 @@ const areaDisponible = lotes
     setPuntosNuevoLote([]);
     setLoteSeleccionado(nuevo);
   }
+
+  async function guardarHistorial(lote, campo, valorAnterior, valorNuevo) {
+  if (!usuario) return;
+  if (String(valorAnterior) === String(valorNuevo)) return;
+
+  const proyecto = await obtenerProyectoSupabase(false);
+  if (!proyecto) return;
+
+  await supabase.from('historial_cambios').insert({
+    proyecto_id: proyecto.id,
+    lote_numero: lote.numero,
+    usuario: perfil?.nombre || usuario.email || 'Usuario',
+    rol: rol,
+    campo: campo,
+    valor_anterior: String(valorAnterior ?? ''),
+    valor_nuevo: String(valorNuevo ?? ''),
+  });
+}
 
   function actualizarLote(numeroOriginal, campo, valor) {
   if (campo !== 'estado' && !puedeEditarTodo) return;
@@ -439,6 +460,13 @@ const areaDisponible = lotes
 
     if (campo === 'estado' && valorFinal === 'libre') {
       actualizado.fecha_reserva = '';
+
+      guardarHistorial(
+        lote,
+        'fecha_reserva',
+        lote.fecha_reserva,
+        ''
+);
     }
 
     if (
@@ -448,6 +476,8 @@ const areaDisponible = lotes
     ) {
       actualizado.fecha_reserva = new Date().toLocaleDateString();
     }
+
+    guardarHistorial(lote, campo, lote[campo], valorFinal);
 
     return actualizado;
   });
