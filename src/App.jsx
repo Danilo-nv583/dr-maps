@@ -842,14 +842,21 @@ const areaDisponible = lotes
         >
           <div
             style={{
-              background: 'white',
-              padding: 25,
-              borderRadius: 12,
-              width: 420,
-              maxHeight: '90vh',
-              overflowY: 'auto',
-              textAlign: 'left',
-            }}
+                background: 'white',
+                padding: 25,
+                borderRadius: 12,
+
+                width: '90%',
+                maxWidth: '500px',
+
+                maxHeight: '90vh',
+                overflowY: 'auto',
+
+                textAlign: 'left',
+
+                resize: 'both',
+                overflow: 'auto',
+                  }}
           >
             <h2>Lote {loteSeleccionado.numero}</h2>
 
