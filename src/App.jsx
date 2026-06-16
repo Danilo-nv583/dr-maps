@@ -6,7 +6,7 @@ const proyectosIniciales = [
   {
     id: 'el-tejar',
     nombre: 'Lotificación El Tejar',
-    imagen: 'mapa-el-tejar.jpeg',
+    imagen: 'mapa-el-tejar.png',
   },
 ];
 
