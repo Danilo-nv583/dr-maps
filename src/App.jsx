@@ -251,6 +251,8 @@ const areaDisponible = lotes
       puntos: lote.puntos,
       area: lote.area || '',
       precio: lote.precio || '',
+      asesor: lote.asesor || '',
+      telefono: lote.telefono || '',
     }));
 
     const { error } = await supabase.from('lotes').insert(lotesParaGuardar);
@@ -288,6 +290,8 @@ const areaDisponible = lotes
       puntos: lote.puntos,
       area: lote.area || '',
       precio: lote.precio || '',
+      asesor: lote.asesor || '',
+      telefono: lote.telefono || '',
     }));
 
     cargandoDesdeNubeRef.current = true;
@@ -394,6 +398,8 @@ const areaDisponible = lotes
       puntos: puntosNuevoLote,
       area: '',
       precio: '',
+      asesor: '',
+      telefono: '',
     };
 
     setLotes([...lotes, nuevo]);
@@ -407,7 +413,11 @@ const areaDisponible = lotes
     if (campo === 'estado' && !puedeCambiarEstado) return;
 
     const valorFinal =
-      campo === 'estado' || campo === 'area' || campo === 'precio'
+      campo === 'estado' ||
+      campo === 'area' ||
+      campo === 'precio' ||
+      campo === 'asesor' ||
+      campo === 'telefono'
         ? valor
         : Number(valor);
 
@@ -949,39 +959,74 @@ const areaDisponible = lotes
           </p>
 )}
 
-            {esAdmin && (
-              <>
-                <label>Área / medida del lote</label>
-                <input
-                  type="text"
-                  placeholder="Ejemplo: 250 m² o 10 x 25 m"
-                  value={loteSeleccionado.area || ''}
-                  onChange={(e) =>
-                    actualizarLote(
-                      loteSeleccionado.numero,
-                      'area',
-                      e.target.value
-                    )
-                  }
-                  style={{ width: '100%', marginBottom: 10 }}
-                />
+            {loteSeleccionado.asesor && (
+  <p>
+    Asesor: <strong>{loteSeleccionado.asesor}</strong>
+  </p>
+)}
 
-                <label>Precio</label>
-                <input
-                  type="text"
-                  placeholder="Ejemplo: Q150,000"
-                  value={loteSeleccionado.precio || ''}
-                  onChange={(e) =>
-                    actualizarLote(
-                      loteSeleccionado.numero,
-                      'precio',
-                      e.target.value
-                    )
-                  }
-                  style={{ width: '100%', marginBottom: 15 }}
-                />
-              </>
-            )}
+{loteSeleccionado.telefono && (
+  <p>
+    Teléfono: <strong>{loteSeleccionado.telefono}</strong>
+  </p>
+)}
+
+{loteSeleccionado.telefono && (
+  <a href={`tel:${loteSeleccionado.telefono}`}>
+    <button style={{ marginBottom: 15 }}>
+      📞 Llamar asesor
+    </button>
+  </a>
+)}
+
+
+                {esAdmin && (
+                  <>
+                    <label>Área / medida del lote</label>
+                    <input
+                      type="text"
+                      placeholder="Ejemplo: 250 m² o 10 x 25 m"
+                      value={loteSeleccionado.area || ''}
+                      onChange={(e) =>
+                        actualizarLote(loteSeleccionado.numero, 'area', e.target.value)
+                      }
+                      style={{ width: '100%', marginBottom: 10 }}
+                    />
+
+                    <label>Precio</label>
+                    <input
+                      type="text"
+                      placeholder="Ejemplo: Q150,000"
+                      value={loteSeleccionado.precio || ''}
+                      onChange={(e) =>
+                        actualizarLote(loteSeleccionado.numero, 'precio', e.target.value)
+                      }
+                      style={{ width: '100%', marginBottom: 15 }}
+                    />
+
+                    <label>Asesor</label>
+                    <input
+                      type="text"
+                      placeholder="Ejemplo: Carlos López"
+                      value={loteSeleccionado.asesor || ''}
+                      onChange={(e) =>
+                        actualizarLote(loteSeleccionado.numero, 'asesor', e.target.value)
+                      }
+                      style={{ width: '100%', marginBottom: 10 }}
+                    />
+
+                    <label>Teléfono</label>
+                    <input
+                      type="text"
+                      placeholder="Ejemplo: 5555-5555"
+                      value={loteSeleccionado.telefono || ''}
+                      onChange={(e) =>
+                        actualizarLote(loteSeleccionado.numero, 'telefono', e.target.value)
+                      }
+                      style={{ width: '100%', marginBottom: 15 }}
+                    />
+                  </>
+                )}
 
             {puedeCambiarEstado && (
               <>
