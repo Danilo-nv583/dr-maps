@@ -718,7 +718,14 @@ function generarPDFLote() {
       
   
 
-      <div style={{ position: 'absolute', top: 15, right: 20 }}>
+          <div
+        style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          marginBottom: 15,
+          padding: '10px 20px 0 20px',
+        }}
+      >
         {usuario ? (
           <button onClick={cerrarSesion}>
             Cerrar sesión ({rol})
