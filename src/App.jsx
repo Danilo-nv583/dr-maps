@@ -703,14 +703,17 @@ function generarPDFLote() {
       
       
 
-      <Dashboard
-        totalLotes={totalLotes}
-        libres={libres}
-        reservados={reservados}
-        vendidos={vendidos}
-        valorDisponible={valorDisponible}
-        areaDisponible={areaDisponible}
-      />
+      {usuario && (
+  <Dashboard
+    rol={rol}
+    totalLotes={totalLotes}
+    libres={libres}
+    reservados={reservados}
+    vendidos={vendidos}
+    valorDisponible={valorDisponible}
+    areaDisponible={areaDisponible}
+  />
+)}
           
       
   
