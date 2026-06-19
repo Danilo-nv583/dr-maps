@@ -7,6 +7,7 @@ import HistorialModal from './components/HistorialModal';
 import BuscadorLote from './components/BuscadorLote';
 import MapaLotes from './components/MapaLotes';
 import ModalLote from './components/ModalLote';
+const [zoomMapa, setZoomMapa] = useState(1);
 
 
 
@@ -900,6 +901,8 @@ function generarPDFLote() {
         colorEstado={colorEstado}
         puntosTexto={puntosTexto}
         centroLote={centroLote}
+        zoomMapa={zoomMapa}
+        setZoomMapa={setZoomMapa}
       />
 
       {loteSeleccionado && (
