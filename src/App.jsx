@@ -20,6 +20,8 @@ function App() {
   const [usuario, setUsuario] = useState(null);
   const [perfil, setPerfil] = useState(null);
   const [mostrarLogin, setMostrarLogin] = useState(false);
+  const [mostrarHistorial, setMostrarHistorial] = useState(false);
+const [historial, setHistorial] = useState([]);
 
   const [proyectos, setProyectos] = useState(proyectosIniciales);
 
@@ -629,6 +631,27 @@ const areaDisponible = lotes
     setLoteSeleccionado(null);
   }
 
+  async function cargarHistorial() {
+  const proyecto = await obtenerProyectoSupabase(false);
+  if (!proyecto) return;
+
+  const { data, error } = await supabase
+    .from('historial_cambios')
+    .select('*')
+    .eq('proyecto_id', proyecto.id)
+    .order('fecha', { ascending: false })
+    .limit(50);
+
+  if (error) {
+    console.error(error);
+    alert('Error cargando historial.');
+    return;
+  }
+
+  setHistorial(data || []);
+  setMostrarHistorial(true);
+}
+
   return (
     <div style={{ textAlign: 'center', fontFamily: 'Arial', position: 'relative' }}>
       
@@ -739,6 +762,10 @@ const areaDisponible = lotes
 
             <button onClick={eliminarProyecto} style={{ marginLeft: 8 }}>
               🗑️ Eliminar proyecto
+            </button>
+
+            <button onClick={cargarHistorial} style={{ marginLeft: 8 }}>
+              📜 Ver historial
             </button>
           </>
         )}
@@ -1209,6 +1236,68 @@ const areaDisponible = lotes
           </div>
         </div>
       )}
+
+      {mostrarHistorial && (
+  <div
+    style={{
+      position: 'fixed',
+      inset: 0,
+      background: 'rgba(0,0,0,0.55)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1000,
+    }}
+  >
+    <div
+      style={{
+        background: 'white',
+        padding: 25,
+        borderRadius: 12,
+        width: '90%',
+        maxWidth: '700px',
+        maxHeight: '90vh',
+        overflowY: 'auto',
+        textAlign: 'left',
+      }}
+    >
+      <h2>📜 Historial de cambios</h2>
+
+      {historial.length === 0 ? (
+        <p>No hay cambios registrados.</p>
+      ) : (
+        historial.map((item) => (
+          <div
+            key={item.id}
+            style={{
+              borderBottom: '1px solid #ddd',
+              padding: '10px 0',
+            }}
+          >
+            <strong>Lote {item.lote_numero}</strong>
+            <p>Usuario: {item.usuario} ({item.rol})</p>
+            <p>Campo: {item.campo}</p>
+            <p>
+              Antes: <strong>{item.valor_anterior || 'vacío'}</strong>
+            </p>
+            <p>
+              Después: <strong>{item.valor_nuevo || 'vacío'}</strong>
+            </p>
+            <small>
+              {new Date(item.fecha).toLocaleString()}
+            </small>
+          </div>
+        ))
+      )}
+
+      <br />
+
+      <button onClick={() => setMostrarHistorial(false)}>
+        Cerrar
+      </button>
+    </div>
+  </div>
+)}
 
       <p>Total de lotes: {lotes.length}</p>
     </div>
