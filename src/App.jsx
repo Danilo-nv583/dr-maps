@@ -7,7 +7,6 @@ import HistorialModal from './components/HistorialModal';
 import BuscadorLote from './components/BuscadorLote';
 import MapaLotes from './components/MapaLotes';
 import ModalLote from './components/ModalLote';
-const [zoomMapa, setZoomMapa] = useState(1);
 
 
 
@@ -58,6 +57,7 @@ const [historial, setHistorial] = useState([]);
   const [contador, setContador] = useState(1);
 
   const [busquedaLote, setBusquedaLote] = useState('');
+  const [zoomMapa, setZoomMapa] = useState(1);
 
   const totalLotes = lotes.length;
 
