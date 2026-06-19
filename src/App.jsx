@@ -656,36 +656,112 @@ const areaDisponible = lotes
     <div style={{ textAlign: 'center', fontFamily: 'Arial', position: 'relative' }}>
       
       
-      <div
+    
       
+  <div
   style={{
-    background: '#f5f5f5',
-    padding: 20,
-    borderRadius: 12,
-    marginBottom: 20,
-    marginTop: 20,
+    margin: '20px auto',
+    maxWidth: '1100px',
   }}
 >
-  <h2>📊 Resumen del Proyecto</h2>
+  <h2 style={{ marginBottom: 20 }}>
+    📊 Dashboard del Proyecto
+  </h2>
 
-  <p>🏘️ Total de lotes: {totalLotes}</p>
+  <div
+    style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+      gap: 15,
+    }}
+  >
+    {[
+      {
+        emoji: '🏘️',
+        titulo: 'Total',
+        valor: totalLotes,
+      },
+      {
+        emoji: '🟢',
+        titulo: 'Libres',
+        valor: libres,
+      },
+      {
+        emoji: '🟡',
+        titulo: 'Reservados',
+        valor: reservados,
+      },
+      {
+        emoji: '🔴',
+        titulo: 'Vendidos',
+        valor: vendidos,
+      },
+    ].map((item) => (
+      <div
+        key={item.titulo}
+        style={{
+          background: 'white',
+          borderRadius: 15,
+          padding: 20,
+          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+        }}
+      >
+        <div style={{ fontSize: 30 }}>
+          {item.emoji}
+        </div>
 
-  <p>🟢 Libres: {libres}</p>
+        <h1 style={{ margin: '10px 0' }}>
+          {item.valor}
+        </h1>
 
-  <p>🟡 Reservados: {reservados}</p>
+        <p style={{ color: '#666' }}>
+          {item.titulo}
+        </p>
+      </div>
+    ))}
 
-  <p>🔴 Vendidos: {vendidos}</p>
+    <div
+      style={{
+        background: 'white',
+        borderRadius: 15,
+        padding: 20,
+        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+      }}
+    >
+      <div style={{ fontSize: 30 }}>
+        💰
+      </div>
 
-  <p>
-    💰 Valor disponible: Q
-    {valorDisponible.toLocaleString()}
-  </p>
+      <h3>
+        Q{valorDisponible.toLocaleString()}
+      </h3>
 
-  <p>
-    📐 Área disponible:
-    {' '}
-    {areaDisponible.toLocaleString()} m²
-  </p>
+      <p style={{ color: '#666' }}>
+        Valor disponible
+      </p>
+    </div>
+
+    <div
+      style={{
+        background: 'white',
+        borderRadius: 15,
+        padding: 20,
+        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+      }}
+    >
+      <div style={{ fontSize: 30 }}>
+        📐
+      </div>
+
+      <h3>
+        {areaDisponible.toLocaleString()} m²
+      </h3>
+
+      <p style={{ color: '#666' }}>
+        Área disponible
+      </p>
+    </div>
+  </div>
 </div>
 
       <div style={{ position: 'absolute', top: 15, right: 20 }}>
