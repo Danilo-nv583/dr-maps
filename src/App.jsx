@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { supabase } from './supabase/supabase';
 import Login from './components/Login';
+import jsPDF from 'jspdf';
 
 const proyectosIniciales = [
   {
@@ -650,6 +651,42 @@ const areaDisponible = lotes
 
   setHistorial(data || []);
   setMostrarHistorial(true);
+}
+
+function generarPDFLote() {
+  if (!loteSeleccionado) return;
+
+  const doc = new jsPDF();
+
+  doc.setFontSize(20);
+  doc.text('DR Maps', 20, 20);
+
+  doc.setFontSize(14);
+  doc.text(`Proyecto: ${proyectoActual.nombre}`, 20, 35);
+  doc.text(`Lote: ${loteSeleccionado.numero}`, 20, 50);
+  doc.text(`Estado: ${loteSeleccionado.estado.toUpperCase()}`, 20, 60);
+
+  doc.text(`Área: ${loteSeleccionado.area || 'No registrada'}`, 20, 75);
+  doc.text(`Precio: ${loteSeleccionado.precio || 'No registrado'}`, 20, 85);
+  doc.text(`Asesor: ${loteSeleccionado.asesor || 'No registrado'}`, 20, 95);
+  doc.text(`Teléfono: ${loteSeleccionado.telefono || 'No registrado'}`, 20, 105);
+
+  doc.text(
+    `Fecha de reserva: ${loteSeleccionado.fecha_reserva || 'No aplica'}`,
+    20,
+    115
+  );
+
+  doc.text('Observaciones:', 20, 130);
+
+  const observaciones = doc.splitTextToSize(
+    loteSeleccionado.observaciones || 'Sin observaciones.',
+    170
+  );
+
+  doc.text(observaciones, 20, 140);
+
+  doc.save(`lote-${loteSeleccionado.numero}-${proyectoActual.id}.pdf`);
 }
 
   return (
@@ -1306,6 +1343,16 @@ const areaDisponible = lotes
                   🗑️ Eliminar lote
                 </button>
               </>
+            )}
+
+            
+            {usuario && (
+              <button
+                onClick={generarPDFLote}
+                style={{ marginRight: 10, marginBottom: 10 }}
+              >
+                📄 Descargar ficha PDF
+              </button>
             )}
 
             <button onClick={() => setLoteSeleccionado(null)}>Cerrar</button>
