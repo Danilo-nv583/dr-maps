@@ -10,6 +10,34 @@ function ModalLote({
   eliminarLote,
   generarPDFLote,
 }) {
+
+
+      function agregarAsesor() {
+    const asesoresActuales = loteSeleccionado.asesores || [];
+
+    actualizarLote(loteSeleccionado.numero, 'asesores', [
+      ...asesoresActuales,
+      { nombre: '', telefono: '' },
+    ]);
+  }
+
+  function actualizarAsesor(index, campo, valor) {
+    const nuevosAsesores = (loteSeleccionado.asesores || []).map((asesor, i) =>
+      i === index ? { ...asesor, [campo]: valor } : asesor
+    );
+
+    actualizarLote(loteSeleccionado.numero, 'asesores', nuevosAsesores);
+  }
+
+  function eliminarAsesor(index) {
+    const nuevosAsesores = (loteSeleccionado.asesores || []).filter(
+      (_, i) => i !== index
+    );
+
+    actualizarLote(loteSeleccionado.numero, 'asesores', nuevosAsesores);
+  }
+
+
   return (
     <div
       style={{
@@ -89,6 +117,34 @@ function ModalLote({
           </a>
         )}
 
+                    {(loteSeleccionado.asesores || []).length > 0 && (
+            <div style={{ marginBottom: 15 }}>
+                <h3>Asesores</h3>
+
+                {(loteSeleccionado.asesores || []).map((asesor, index) => (
+                <div
+                    key={index}
+                    style={{
+                    border: '1px solid #ddd',
+                    borderRadius: 8,
+                    padding: 10,
+                    marginBottom: 10,
+                    }}
+                >
+                    <p>
+                    <strong>{asesor.nombre || 'Asesor sin nombre'}</strong>
+                    </p>
+
+                    {asesor.telefono && (
+                    <a href={`tel:${asesor.telefono}`}>
+                        <button>📞 Llamar</button>
+                    </a>
+                    )}
+                </div>
+                ))}
+            </div>
+            )}
+
         {(esAdmin || esVendedor) && loteSeleccionado.observaciones && (
           <p>
             Observaciones:{' '}
@@ -147,7 +203,54 @@ function ModalLote({
                 actualizarLote(loteSeleccionado.numero, 'telefono', e.target.value)
               }
               style={{ width: '100%', marginBottom: 15 }}
+
+              
             />
+
+            <h3>Asesores adicionales</h3>
+
+{(loteSeleccionado.asesores || []).map((asesor, index) => (
+  <div
+    key={index}
+    style={{
+      border: '1px solid #ddd',
+      borderRadius: 8,
+      padding: 10,
+      marginBottom: 10,
+    }}
+  >
+    <label>Nombre del asesor</label>
+    <input
+      type="text"
+      value={asesor.nombre || ''}
+      onChange={(e) =>
+        actualizarAsesor(index, 'nombre', e.target.value)
+      }
+      style={{ width: '100%', marginBottom: 8 }}
+    />
+
+    <label>Teléfono del asesor</label>
+    <input
+      type="text"
+      value={asesor.telefono || ''}
+      onChange={(e) =>
+        actualizarAsesor(index, 'telefono', e.target.value)
+      }
+      style={{ width: '100%', marginBottom: 8 }}
+    />
+
+    <button onClick={() => eliminarAsesor(index)}>
+      🗑️ Quitar asesor
+    </button>
+  </div>
+))}
+
+<button
+  onClick={agregarAsesor}
+  style={{ marginBottom: 15 }}
+>
+  ➕ Agregar asesor
+</button>
 
             <label>Observaciones</label>
             <textarea

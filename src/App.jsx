@@ -454,7 +454,8 @@ const areaDisponible = lotes
     campo === 'asesor' ||
     campo === 'telefono' ||
     campo === 'observaciones' ||
-    campo === 'fecha_reserva'
+    campo === 'fecha_reserva' ||
+    campo === 'asesores'
       ? valor
       : Number(valor);
 
