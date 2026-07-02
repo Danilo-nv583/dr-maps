@@ -520,3 +520,316 @@ h2{
     gap:10px;
     margin-top:10px;
 }
+
+/* ============================= */
+/* OPTIMIZACIÓN GENERAL MÓVIL */
+/* ============================= */
+
+@media (max-width: 768px) {
+    body {
+        background: #eef3fb;
+        overflow-x: hidden;
+    }
+
+    button {
+        padding: 10px 14px;
+        font-size: 14px;
+        border-radius: 11px;
+    }
+
+    input,
+    select,
+    textarea {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    /* Header principal */
+    .app-header {
+        width: 92%;
+        margin: 15px auto 18px auto;
+        padding: 20px 14px;
+        border-radius: 20px;
+        gap: 12px;
+    }
+
+    .app-logo {
+        width: 58px;
+        height: 58px;
+        font-size: 28px;
+        border-radius: 17px;
+    }
+
+    .app-header h1 {
+        font-size: 32px;
+    }
+
+    .app-header p {
+        font-size: 13px;
+        line-height: 1.4;
+    }
+
+    /* Botón login/cerrar sesión */
+    body > div button {
+        max-width: 100%;
+    }
+
+    /* Panel proyecto */
+    .project-panel {
+        width: 92%;
+        padding: 16px 12px;
+        border-radius: 18px;
+    }
+
+    .project-selector {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .project-selector select {
+        width: 100%;
+        max-width: 260px;
+    }
+
+    .admin-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .admin-actions button {
+        width: 100%;
+        max-width: 280px;
+    }
+
+    /* Panel buscador */
+    .search-panel {
+        width: 92%;
+        padding: 15px 12px;
+        border-radius: 18px;
+    }
+
+    .search-panel p {
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    .status-legend {
+        gap: 10px;
+        font-size: 13px;
+    }
+
+    /* Dashboard móvil */
+    .dashboard {
+        width: 92%;
+        margin: 15px auto;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .dashboard-card {
+        padding: 16px 10px;
+        border-radius: 16px;
+    }
+
+    .dashboard-icon {
+        font-size: 26px;
+    }
+
+    .dashboard-card h1 {
+        font-size: 26px;
+    }
+
+    .dashboard-card p {
+        font-size: 13px;
+    }
+
+    /* Mapa */
+    .map-section {
+        width: 94%;
+        padding: 12px;
+        border-radius: 20px;
+        margin: 18px auto;
+    }
+
+    .map-section > div:first-child {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .map-section > div:first-child strong {
+        width: 100%;
+        text-align: center;
+        margin: 4px 0;
+        font-size: 14px;
+    }
+
+    .map-section > div:last-child {
+        max-height: 65vh !important;
+        border-radius: 16px !important;
+    }
+
+    /* Modal móvil */
+    .modal-overlay {
+        padding: 10px;
+        align-items: flex-start;
+        overflow-y: auto;
+    }
+
+    .modal-lote {
+        width: 96%;
+        max-width: 96%;
+        max-height: 92vh;
+        margin-top: 12px;
+        padding: 18px;
+        border-radius: 22px;
+    }
+
+    .modal-header h2 {
+        font-size: 36px;
+    }
+
+    .modal-badge {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+
+    .btn-close {
+        padding: 7px 11px;
+    }
+
+    .estado-pill {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .info-card,
+    .section-card,
+    .admin-edit-card {
+        padding: 14px;
+        border-radius: 16px;
+    }
+
+    .asesor-botones {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .asesor-botones a,
+    .asesor-botones button {
+        width: 100%;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .modal-actions button {
+        width: 100%;
+    }
+
+    .corner-grid {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+
+    .corner-grid span {
+        font-weight: 700;
+    }
+}
+
+/* ============================= */
+/* CELULARES MUY PEQUEÑOS */
+/* ============================= */
+
+@media (max-width: 420px) {
+    .app-header h1 {
+        font-size: 28px;
+    }
+
+    .app-header p {
+        font-size: 12px;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .status-legend {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .search-panel {
+        padding: 14px 10px;
+    }
+
+    .map-section {
+        width: 96%;
+        padding: 10px;
+    }
+
+    .modal-lote {
+        padding: 16px;
+        border-radius: 20px;
+    }
+
+    .modal-header h2 {
+        font-size: 32px;
+    }
+}
+
+.zoom-controls{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+}
+
+.zoom-controls button{
+    min-width:42px;
+    height:38px;
+    padding:0 12px;
+    font-size:16px;
+    border-radius:12px;
+}
+
+.zoom-controls strong{
+    font-size:14px;
+    font-weight:700;
+    color:#1f2937;
+    padding:0 6px;
+}
+
+@media(max-width:768px){
+    .zoom-controls{
+        gap:8px;
+        margin-bottom:12px;
+    }
+
+    .zoom-controls button{
+        min-width:40px;
+        height:38px;
+        padding:0 12px;
+        font-size:15px;
+    }
+
+    .zoom-controls strong{
+        width:auto !important;
+        font-size:14px;
+        margin:0 4px !important;
+    }
+}

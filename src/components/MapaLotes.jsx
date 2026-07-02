@@ -18,23 +18,23 @@ function MapaLotes({
 }) {
   return (
     <div className="map-section">
-      <div style={{ marginBottom: 10 }}>
-        <button onClick={() => setZoomMapa(Math.max(1, zoomMapa - 0.25))}>
-          ➖
-        </button>
+      <div className="zoom-controls">
+  <button onClick={() => setZoomMapa(Math.max(1, zoomMapa - 0.25))}>
+    −
+  </button>
 
-        <strong style={{ margin: '0 10px' }}>
-          Zoom: {Math.round(zoomMapa * 100)}%
-        </strong>
+  <strong>
+    Zoom: {Math.round(zoomMapa * 100)}%
+  </strong>
 
-        <button onClick={() => setZoomMapa(Math.min(3, zoomMapa + 0.25))}>
-          ➕
-        </button>
+  <button onClick={() => setZoomMapa(Math.min(3, zoomMapa + 0.25))}>
+    +
+  </button>
 
-        <button onClick={() => setZoomMapa(1)} style={{ marginLeft: 8 }}>
-          Reiniciar
-        </button>
-      </div>
+  <button onClick={() => setZoomMapa(1)}>
+    Reiniciar
+  </button>
+</div>
 
       <div
         style={{
