@@ -730,6 +730,10 @@ function exportarCSV() {
     setLoteSeleccionado(null);
   }
 
+
+
+
+
 async function cargarHistorial() {
   const proyecto = await obtenerProyectoSupabase(false);
   if (!proyecto) return;
@@ -750,6 +754,10 @@ async function cargarHistorial() {
   setHistorial(data || []);
   setMostrarHistorial(true);
 }
+
+
+
+
 
 function exportarHistorialPDF() {
   if (historial.length === 0) {
@@ -811,6 +819,12 @@ function exportarHistorialPDF() {
   doc.save(`${proyectoActual.id}-historial-cambios.pdf`);
 }
 
+
+
+
+
+
+
 async function borrarHistorial() {
   if (!esAdmin) return;
 
@@ -842,40 +856,185 @@ async function borrarHistorial() {
 }
 
 
+
+
 function generarPDFLote() {
   if (!loteSeleccionado) return;
 
   const doc = new jsPDF();
 
-  doc.setFontSize(20);
-  doc.text('DR Maps', 20, 20);
+  const estado = loteSeleccionado.estado.toUpperCase();
+
+  function colorEstadoPDF(estado) {
+    if (estado === 'libre') return [34, 197, 94];
+    if (estado === 'reservado') return [250, 204, 21];
+    if (estado === 'vendido') return [239, 68, 68];
+    return [100, 116, 139];
+  }
+
+  const colorEstado = colorEstadoPDF(loteSeleccionado.estado);
+
+  // Fondo general
+  doc.setFillColor(245, 248, 252);
+  doc.rect(0, 0, 210, 297, 'F');
+
+  // Encabezado
+  doc.setFillColor(30, 64, 175);
+  doc.roundedRect(12, 12, 186, 34, 4, 4, 'F');
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.text('DR Maps', 20, 27);
+
+  doc.setFontSize(10);
+  doc.text('Sistema inteligente para gestion de lotificaciones', 20, 36);
+
+  // Título ficha
+  doc.setTextColor(30, 41, 59);
+  doc.setFontSize(18);
+  doc.text('Ficha tecnica del lote', 20, 60);
+
+  doc.setFontSize(11);
+  doc.setTextColor(100, 116, 139);
+  doc.text(`Fecha de emision: ${new Date().toLocaleString()}`, 20, 68);
+
+  // Tarjeta principal
+  doc.setFillColor(255, 255, 255);
+  doc.roundedRect(12, 78, 186, 58, 5, 5, 'F');
+
+  doc.setTextColor(30, 41, 59);
+  doc.setFontSize(12);
+  doc.text('Proyecto', 20, 92);
 
   doc.setFontSize(14);
-  doc.text(`Proyecto: ${proyectoActual.nombre}`, 20, 35);
-  doc.text(`Lote: ${loteSeleccionado.numero}`, 20, 50);
-  doc.text(`Estado: ${loteSeleccionado.estado.toUpperCase()}`, 20, 60);
+  doc.setTextColor(15, 23, 42);
+  doc.text(proyectoActual.nombre, 20, 101);
 
-  doc.text(`Área: ${loteSeleccionado.area || 'No registrada'}`, 20, 75);
-  doc.text(`Precio: ${loteSeleccionado.precio || 'No registrado'}`, 20, 85);
-  doc.text(`Asesor: ${loteSeleccionado.asesor || 'No registrado'}`, 20, 95);
-  doc.text(`Teléfono: ${loteSeleccionado.telefono || 'No registrado'}`, 20, 105);
+  doc.setFontSize(12);
+  doc.setTextColor(30, 41, 59);
+  doc.text('Lote', 20, 117);
 
+  doc.setFontSize(24);
+  doc.setTextColor(15, 23, 42);
+  doc.text(String(loteSeleccionado.numero), 20, 130);
+
+  // Estado
+  doc.setFillColor(...colorEstado);
+  doc.roundedRect(135, 94, 48, 14, 3, 3, 'F');
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(10);
+  doc.text(estado, 159, 103, { align: 'center' });
+
+  // Datos comerciales
+  doc.setFillColor(255, 255, 255);
+  doc.roundedRect(12, 145, 186, 50, 5, 5, 'F');
+
+  doc.setTextColor(30, 41, 59);
+  doc.setFontSize(14);
+  doc.text('Informacion comercial', 20, 158);
+
+  doc.setFontSize(11);
+  doc.setTextColor(51, 65, 85);
+
+  doc.text(`Area: ${loteSeleccionado.area || 'No registrada'}`, 20, 172);
+  doc.text(`Precio: ${loteSeleccionado.precio || 'No registrado'}`, 20, 182);
   doc.text(
     `Fecha de reserva: ${loteSeleccionado.fecha_reserva || 'No aplica'}`,
     20,
-    115
+    192
   );
 
-  doc.text('Observaciones:', 20, 130);
+  // Asesor principal
+  let y = 210;
+
+  doc.setFillColor(255, 255, 255);
+  doc.roundedRect(12, y, 186, 42, 5, 5, 'F');
+
+  doc.setTextColor(30, 41, 59);
+  doc.setFontSize(14);
+  doc.text('Asesor principal', 20, y + 13);
+
+  doc.setFontSize(11);
+  doc.setTextColor(51, 65, 85);
+  doc.text(
+    `Nombre: ${loteSeleccionado.asesor || 'No registrado'}`,
+    20,
+    y + 26
+  );
+  doc.text(
+    `Telefono: ${loteSeleccionado.telefono || 'No registrado'}`,
+    20,
+    y + 36
+  );
+
+  y += 58;
+
+  // Asesores adicionales
+  const asesoresAdicionales = loteSeleccionado.asesores || [];
+
+  if (asesoresAdicionales.length > 0) {
+    if (y > 235) {
+      doc.addPage();
+      y = 20;
+    }
+
+    doc.setFillColor(255, 255, 255);
+    doc.roundedRect(12, y, 186, 18 + asesoresAdicionales.length * 12, 5, 5, 'F');
+
+    doc.setTextColor(30, 41, 59);
+    doc.setFontSize(14);
+    doc.text('Asesores adicionales', 20, y + 13);
+
+    doc.setFontSize(11);
+    doc.setTextColor(51, 65, 85);
+
+    asesoresAdicionales.forEach((asesor, index) => {
+      doc.text(
+        `${index + 1}. ${asesor.nombre || 'Sin nombre'} - ${
+          asesor.telefono || 'Sin telefono'
+        }`,
+        20,
+        y + 27 + index * 10
+      );
+    });
+
+    y += 28 + asesoresAdicionales.length * 12;
+  }
+
+  // Observaciones
+  if (y > 230) {
+    doc.addPage();
+    y = 20;
+  }
+
+  doc.setFillColor(255, 255, 255);
+  doc.roundedRect(12, y, 186, 45, 5, 5, 'F');
+
+  doc.setTextColor(30, 41, 59);
+  doc.setFontSize(14);
+  doc.text('Observaciones', 20, y + 13);
 
   const observaciones = doc.splitTextToSize(
-    loteSeleccionado.observaciones || 'Sin observaciones.',
-    170
+    loteSeleccionado.observaciones || 'Sin observaciones registradas.',
+    165
   );
 
-  doc.text(observaciones, 20, 140);
+  doc.setFontSize(11);
+  doc.setTextColor(51, 65, 85);
+  doc.text(observaciones, 20, y + 27);
 
-  doc.save(`lote-${loteSeleccionado.numero}-${proyectoActual.id}.pdf`);
+  // Pie de página
+  doc.setFontSize(9);
+  doc.setTextColor(100, 116, 139);
+  doc.text(
+    'Documento generado automaticamente por DR Maps.',
+    105,
+    285,
+    { align: 'center' }
+  );
+
+  doc.save(`ficha-lote-${loteSeleccionado.numero}-${proyectoActual.id}.pdf`);
 }
 
   return (
