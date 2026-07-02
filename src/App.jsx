@@ -564,27 +564,115 @@ const areaDisponible = lotes
     }
   }
 
-  function exportarJSON() {
-    const datos = {
-      proyecto: proyectoActual.nombre,
-      imagen: proyectoActual.imagen,
-      fechaExportacion: new Date().toISOString(),
-      lotes,
-    };
 
-    const archivo = new Blob([JSON.stringify(datos, null, 2)], {
-      type: 'application/json',
-    });
 
-    const url = URL.createObjectURL(archivo);
-    const enlace = document.createElement('a');
 
-    enlace.href = url;
-    enlace.download = `${proyectoActual.id}-lotes.json`;
-    enlace.click();
+function exportarJSON() {
+  const datos = {
+    proyecto: proyectoActual.nombre,
+    imagen: proyectoActual.imagen,
+    fechaExportacion: new Date().toISOString(),
+    lotes,
+  };
 
-    URL.revokeObjectURL(url);
+  const archivo = new Blob([JSON.stringify(datos, null, 2)], {
+    type: 'application/json',
+  });
+
+  const url = URL.createObjectURL(archivo);
+  const enlace = document.createElement('a');
+
+  enlace.href = url;
+  enlace.download = `${proyectoActual.id}-lotes.json`;
+  enlace.click();
+
+  URL.revokeObjectURL(url);
+}
+
+
+
+
+
+
+function exportarCSV() {
+  if (lotes.length === 0) {
+    alert('No hay lotes para exportar.');
+    return;
   }
+
+  const encabezados = [
+    'Numero',
+    'Estado',
+    'Area',
+    'Precio',
+    'Asesor principal',
+    'Telefono principal',
+    'Asesores adicionales',
+    'Observaciones',
+    'Fecha reserva',
+    'Puntos',
+  ];
+
+  const limpiarTexto = (valor) => {
+    if (valor === null || valor === undefined) return '';
+
+    return String(valor)
+      .replace(/"/g, '""')
+      .replace(/\n/g, ' ');
+  };
+
+  const filas = lotes.map((lote) => {
+    const asesoresAdicionales = (lote.asesores || [])
+      .map(
+        (asesor) =>
+          `${asesor.nombre || 'Sin nombre'} - ${
+            asesor.telefono || 'Sin teléfono'
+          }`
+      )
+      .join(' | ');
+
+    const puntos = (lote.puntos || [])
+      .map((p) => `x:${p.x}, y:${p.y}`)
+      .join(' | ');
+
+    return [
+      lote.numero,
+      lote.estado,
+      lote.area || '',
+      lote.precio || '',
+      lote.asesor || '',
+      lote.telefono || '',
+      asesoresAdicionales,
+      lote.observaciones || '',
+      lote.fecha_reserva || '',
+      puntos,
+    ].map((valor) => `"${limpiarTexto(valor)}"`);
+  });
+
+  const contenidoCSV = [
+    encabezados.map((h) => `"${h}"`).join(','),
+    ...filas.map((fila) => fila.join(',')),
+  ].join('\n');
+
+  const archivo = new Blob(['\uFEFF' + contenidoCSV], {
+    type: 'text/csv;charset=utf-8;',
+  });
+
+  const url = URL.createObjectURL(archivo);
+  const enlace = document.createElement('a');
+
+  enlace.href = url;
+  enlace.download = `${proyectoActual.id}-lotes.csv`;
+  enlace.click();
+
+  URL.revokeObjectURL(url);
+}
+
+
+
+
+
+
 
   function importarJSON(event) {
     if (!puedeEditarTodo) return;
@@ -846,6 +934,10 @@ function generarPDFLote() {
           <>
             <button onClick={exportarJSON} style={{ marginLeft: 8 }}>
               📤 Exportar JSON
+            </button>
+
+            <button onClick={exportarCSV} style={{ marginLeft: 8 }}>
+              📊 Exportar CSV
             </button>
 
             <button
