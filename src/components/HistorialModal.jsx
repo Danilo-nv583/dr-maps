@@ -1,4 +1,10 @@
-function HistorialModal({ historial, onCerrar }) {
+function HistorialModal({
+  historial,
+  onCerrar,
+  onExportarPDF,
+  onBorrarHistorial,
+  esAdmin,
+}) {
   return (
     <div
       style={{
@@ -9,21 +15,51 @@ function HistorialModal({ historial, onCerrar }) {
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 1000,
+        padding: 15,
       }}
     >
       <div
         style={{
           background: 'white',
           padding: 25,
-          borderRadius: 12,
+          borderRadius: 16,
           width: '90%',
-          maxWidth: '700px',
+          maxWidth: '750px',
           maxHeight: '90vh',
           overflowY: 'auto',
           textAlign: 'left',
+          boxShadow: '0 20px 50px rgba(0,0,0,0.25)',
         }}
       >
         <h2>📜 Historial de cambios</h2>
+
+        <div
+          style={{
+            display: 'flex',
+            gap: 10,
+            flexWrap: 'wrap',
+            marginBottom: 20,
+          }}
+        >
+          <button onClick={onExportarPDF}>
+            📄 Exportar historial PDF
+          </button>
+
+          {esAdmin && (
+            <button
+              onClick={onBorrarHistorial}
+              style={{
+                background: 'linear-gradient(135deg,#ef4444,#b91c1c)',
+              }}
+            >
+              🗑️ Borrar historial
+            </button>
+          )}
+
+          <button onClick={onCerrar}>
+            Cerrar
+          </button>
+        </div>
 
         {historial.length === 0 ? (
           <p>No hay cambios registrados.</p>
@@ -33,26 +69,33 @@ function HistorialModal({ historial, onCerrar }) {
               key={item.id}
               style={{
                 borderBottom: '1px solid #ddd',
-                padding: '10px 0',
+                padding: '12px 0',
               }}
             >
               <strong>Lote {item.lote_numero}</strong>
-              <p>Usuario: {item.usuario} ({item.rol})</p>
-              <p>Campo: {item.campo}</p>
+
+              <p>
+                Usuario: <strong>{item.usuario}</strong> ({item.rol})
+              </p>
+
+              <p>
+                Campo modificado: <strong>{item.campo}</strong>
+              </p>
+
               <p>
                 Antes: <strong>{item.valor_anterior || 'vacío'}</strong>
               </p>
+
               <p>
                 Después: <strong>{item.valor_nuevo || 'vacío'}</strong>
               </p>
-              <small>{new Date(item.fecha).toLocaleString()}</small>
+
+              <small>
+                {new Date(item.fecha).toLocaleString()}
+              </small>
             </div>
           ))
         )}
-
-        <br />
-
-        <button onClick={onCerrar}>Cerrar</button>
       </div>
     </div>
   );

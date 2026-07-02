@@ -730,7 +730,7 @@ function exportarCSV() {
     setLoteSeleccionado(null);
   }
 
-  async function cargarHistorial() {
+async function cargarHistorial() {
   const proyecto = await obtenerProyectoSupabase(false);
   if (!proyecto) return;
 
@@ -750,6 +750,97 @@ function exportarCSV() {
   setHistorial(data || []);
   setMostrarHistorial(true);
 }
+
+function exportarHistorialPDF() {
+  if (historial.length === 0) {
+    alert('No hay historial para exportar.');
+    return;
+  }
+
+  const doc = new jsPDF();
+
+  doc.setFontSize(20);
+  doc.text('DR Maps', 20, 20);
+
+  doc.setFontSize(14);
+  doc.text('Historial de cambios', 20, 35);
+  doc.text(`Proyecto: ${proyectoActual.nombre}`, 20, 45);
+
+  doc.setFontSize(10);
+  doc.text(`Fecha de exportación: ${new Date().toLocaleString()}`, 20, 55);
+
+  let y = 70;
+
+  historial.forEach((item, index) => {
+    if (y > 260) {
+      doc.addPage();
+      y = 20;
+    }
+
+    doc.setFontSize(12);
+    doc.text(`Cambio ${index + 1}`, 20, y);
+
+    doc.setFontSize(10);
+    doc.text(`Lote: ${item.lote_numero}`, 20, y + 8);
+    doc.text(`Usuario: ${item.usuario}`, 20, y + 16);
+    doc.text(`Rol: ${item.rol}`, 20, y + 24);
+    doc.text(`Campo: ${item.campo}`, 20, y + 32);
+
+    const antes = doc.splitTextToSize(
+      `Antes: ${item.valor_anterior || 'vacío'}`,
+      165
+    );
+
+    const despues = doc.splitTextToSize(
+      `Después: ${item.valor_nuevo || 'vacío'}`,
+      165
+    );
+
+    doc.text(antes, 20, y + 40);
+    doc.text(despues, 20, y + 48 + antes.length * 5);
+
+    doc.text(
+      `Fecha: ${new Date(item.fecha).toLocaleString()}`,
+      20,
+      y + 58 + antes.length * 5 + despues.length * 5
+    );
+
+    y += 78 + antes.length * 5 + despues.length * 5;
+  });
+
+  doc.save(`${proyectoActual.id}-historial-cambios.pdf`);
+}
+
+async function borrarHistorial() {
+  if (!esAdmin) return;
+
+  const confirmar = confirm(
+    '¿Seguro que deseas borrar TODO el historial de cambios de este proyecto? Esta acción no se puede deshacer.'
+  );
+
+  if (!confirmar) return;
+
+  const proyecto = await obtenerProyectoSupabase(false);
+  if (!proyecto) {
+    alert('No se encontró el proyecto en Supabase.');
+    return;
+  }
+
+  const { error } = await supabase
+    .from('historial_cambios')
+    .delete()
+    .eq('proyecto_id', proyecto.id);
+
+  if (error) {
+    console.error(error);
+    alert('Error borrando historial.');
+    return;
+  }
+
+  setHistorial([]);
+  alert('Historial borrado correctamente.');
+}
+
 
 function generarPDFLote() {
   if (!loteSeleccionado) return;
@@ -1022,6 +1113,9 @@ function generarPDFLote() {
         <HistorialModal
           historial={historial}
           onCerrar={() => setMostrarHistorial(false)}
+          onExportarPDF={exportarHistorialPDF}
+          onBorrarHistorial={borrarHistorial}
+          esAdmin={esAdmin}
         />
       )}
 
