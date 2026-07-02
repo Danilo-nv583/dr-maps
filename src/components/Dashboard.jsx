@@ -32,29 +32,15 @@ function Dashboard({
   }
 
   return (
-    <div style={{ margin: '20px auto', maxWidth: '1100px' }}>
-      <h2 style={{ marginBottom: 20 }}>📊 Dashboard del Proyecto</h2>
+    <div className="dashboard">
+      <h2>📊 Dashboard del Proyecto</h2>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-          gap: 15,
-        }}
-      >
+      <div className="dashboard-grid">
         {tarjetas.map((item) => (
-          <div
-            key={item.titulo}
-            style={{
-              background: 'white',
-              borderRadius: 15,
-              padding: 20,
-              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-            }}
-          >
-            <div style={{ fontSize: 30 }}>{item.emoji}</div>
-            <h1 style={{ margin: '10px 0' }}>{item.valor}</h1>
-            <p style={{ color: '#666' }}>{item.titulo}</p>
+          <div className="dashboard-card" key={item.titulo}>
+            <div className="dashboard-icon">{item.emoji}</div>
+            <h1>{item.valor}</h1>
+            <p>{item.titulo}</p>
           </div>
         ))}
       </div>

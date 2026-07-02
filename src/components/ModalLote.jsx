@@ -9,10 +9,9 @@ function ModalLote({
   moverPunto,
   eliminarLote,
   generarPDFLote,
+  proyectoActual,
 }) {
-
-
-      function agregarAsesor() {
+  function agregarAsesor() {
     const asesoresActuales = loteSeleccionado.asesores || [];
 
     actualizarLote(loteSeleccionado.numero, 'asesores', [
@@ -37,37 +36,169 @@ function ModalLote({
     actualizarLote(loteSeleccionado.numero, 'asesores', nuevosAsesores);
   }
 
+  const estadoTexto = loteSeleccionado.estado.toUpperCase();
+
+  const telefonoPrincipalLimpio = (loteSeleccionado.telefono || '').replace(
+    /\D/g,
+    ''
+  );
+
+
+  function compartirWhatsApp() {
+  const asesores = [
+    loteSeleccionado.asesor && loteSeleccionado.telefono
+      ? `👤 ${loteSeleccionado.asesor} - 📞 ${loteSeleccionado.telefono}`
+      : '',
+    ...(loteSeleccionado.asesores || []).map(
+      (asesor) =>
+        `👤 ${asesor.nombre || 'Asesor'} - 📞 ${asesor.telefono || 'Sin teléfono'}`
+    ),
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  const mensaje = `
+🏘️ ${proyectoActual.nombre}
+
+📍 Lote: ${loteSeleccionado.numero}
+Estado: ${loteSeleccionado.estado.toUpperCase()}
+📐 Área: ${loteSeleccionado.area || 'No registrada'}
+💰 Precio: ${loteSeleccionado.precio || 'No registrado'}
+📅 Reserva: ${loteSeleccionado.fecha_reserva || 'No aplica'}
+
+${asesores ? `Asesores:\n${asesores}` : ''}
+
+${loteSeleccionado.observaciones ? `📝 Observaciones: ${loteSeleccionado.observaciones}` : ''}
+
+Consulta disponibilidad en DR Maps.
+`.trim();
+
+const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(mensaje)}`;
+window.open(url, '_blank');
+}
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'rgba(0,0,0,0.55)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 999,
-      }}
-    >
-      <div
-        style={{
-          background: 'white',
-          padding: 25,
-          borderRadius: 12,
-          width: '90%',
-          maxWidth: '500px',
-          maxHeight: '90vh',
-          overflowY: 'auto',
-          textAlign: 'left',
-          resize: 'both',
-          overflow: 'auto',
-        }}
-      >
-        <h2>Lote {loteSeleccionado.numero}</h2>
+    <div className="modal-overlay">
+      <div className="modal-lote">
+        <div className="modal-header">
+          <div>
+            <span className="modal-badge">🏘️ Lote</span>
+            <h2>{loteSeleccionado.numero}</h2>
+          </div>
+
+          <button
+            className="btn-close"
+            onClick={() => setLoteSeleccionado(null)}
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className={`estado-pill ${loteSeleccionado.estado}`}>
+          {estadoTexto}
+        </div>
+
+        <div className="info-grid">
+          {loteSeleccionado.area && (
+            <div className="info-card">
+              <span>📐 Área</span>
+              <strong>{loteSeleccionado.area}</strong>
+            </div>
+          )}
+
+          {loteSeleccionado.precio && (
+            <div className="info-card">
+              <span>💰 Precio</span>
+              <strong>{loteSeleccionado.precio}</strong>
+            </div>
+          )}
+
+          {loteSeleccionado.fecha_reserva && (
+            <div className="info-card">
+              <span>📅 Reserva</span>
+              <strong>{loteSeleccionado.fecha_reserva}</strong>
+            </div>
+          )}
+        </div>
+
+        {(loteSeleccionado.asesor || loteSeleccionado.telefono) && (
+          <div className="section-card">
+            <h3>👤 Asesor principal</h3>
+
+            {loteSeleccionado.asesor && <p>{loteSeleccionado.asesor}</p>}
+
+            {loteSeleccionado.telefono && (
+              <div className="asesor-botones">
+                <a href={`tel:${loteSeleccionado.telefono}`}>
+                  <button className="btn-call">📞 Llamar asesor</button>
+                </a>
+
+                {telefonoPrincipalLimpio && (
+                  <a
+                    href={`https://wa.me/502${telefonoPrincipalLimpio}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <button className="btn-whatsapp">💬 WhatsApp</button>
+                  </a>
+
+                  
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        
+
+        {(loteSeleccionado.asesores || []).length > 0 && (
+          <div className="section-card">
+            <h3>👥 Asesores adicionales</h3>
+
+            {(loteSeleccionado.asesores || []).map((asesor, index) => {
+              const telefonoAsesorLimpio = (asesor.telefono || '').replace(
+                /\D/g,
+                ''
+              );
+
+              return (
+                <div className="asesor-card" key={index}>
+                  <strong>{asesor.nombre || 'Asesor sin nombre'}</strong>
+
+                  {asesor.telefono && (
+                    <div className="asesor-botones">
+                      <a href={`tel:${asesor.telefono}`}>
+                        <button className="btn-call">📞 Llamar</button>
+                      </a>
+
+                      {telefonoAsesorLimpio && (
+                        <a
+                          href={`https://wa.me/502${telefonoAsesorLimpio}`}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          <button className="btn-whatsapp">💬 WhatsApp</button>
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {(esAdmin || esVendedor) && loteSeleccionado.observaciones && (
+          <div className="section-card">
+            <h3>📝 Observaciones</h3>
+            <p>{loteSeleccionado.observaciones}</p>
+          </div>
+        )}
 
         {esAdmin && (
-          <>
+          <div className="admin-edit-card">
+            <h3>✏️ Edición administrativa</h3>
+
             <label>Número</label>
             <input
               type="number"
@@ -75,186 +206,76 @@ function ModalLote({
               onChange={(e) =>
                 actualizarLote(loteSeleccionado.numero, 'numero', e.target.value)
               }
-              style={{ width: '100%', marginBottom: 10 }}
             />
-          </>
-        )}
 
-        <p>
-          Estado actual:{' '}
-          <strong>{loteSeleccionado.estado.toUpperCase()}</strong>
-        </p>
-
-        {loteSeleccionado.area && (
-          <p>
-            Área: <strong>{loteSeleccionado.area}</strong>
-          </p>
-        )}
-
-        {loteSeleccionado.precio && (
-          <p>
-            Precio: <strong>{loteSeleccionado.precio}</strong>
-          </p>
-        )}
-
-        {loteSeleccionado.asesor && (
-          <p>
-            Asesor: <strong>{loteSeleccionado.asesor}</strong>
-          </p>
-        )}
-
-        {loteSeleccionado.telefono && (
-          <p>
-            Teléfono: <strong>{loteSeleccionado.telefono}</strong>
-          </p>
-        )}
-
-        {loteSeleccionado.telefono && (
-          <a href={`tel:${loteSeleccionado.telefono}`}>
-            <button style={{ marginBottom: 15 }}>
-              📞 Llamar asesor
-            </button>
-          </a>
-        )}
-
-                    {(loteSeleccionado.asesores || []).length > 0 && (
-            <div style={{ marginBottom: 15 }}>
-                <h3>Asesores</h3>
-
-                {(loteSeleccionado.asesores || []).map((asesor, index) => (
-                <div
-                    key={index}
-                    style={{
-                    border: '1px solid #ddd',
-                    borderRadius: 8,
-                    padding: 10,
-                    marginBottom: 10,
-                    }}
-                >
-                    <p>
-                    <strong>{asesor.nombre || 'Asesor sin nombre'}</strong>
-                    </p>
-
-                    {asesor.telefono && (
-                    <a href={`tel:${asesor.telefono}`}>
-                        <button>📞 Llamar</button>
-                    </a>
-                    )}
-                </div>
-                ))}
-            </div>
-            )}
-
-        {(esAdmin || esVendedor) && loteSeleccionado.observaciones && (
-          <p>
-            Observaciones:{' '}
-            <strong>{loteSeleccionado.observaciones}</strong>
-          </p>
-        )}
-
-        {loteSeleccionado.fecha_reserva && (
-          <p>
-            📅 Reservado desde:{' '}
-            <strong>{loteSeleccionado.fecha_reserva}</strong>
-          </p>
-        )}
-
-        {esAdmin && (
-          <>
-            <label>Área / medida del lote</label>
+            <label>Área / medida</label>
             <input
               type="text"
-              placeholder="Ejemplo: 250 m² o 10 x 25 m"
               value={loteSeleccionado.area || ''}
               onChange={(e) =>
                 actualizarLote(loteSeleccionado.numero, 'area', e.target.value)
               }
-              style={{ width: '100%', marginBottom: 10 }}
             />
 
             <label>Precio</label>
             <input
               type="text"
-              placeholder="Ejemplo: Q150,000"
               value={loteSeleccionado.precio || ''}
               onChange={(e) =>
                 actualizarLote(loteSeleccionado.numero, 'precio', e.target.value)
               }
-              style={{ width: '100%', marginBottom: 15 }}
             />
 
-            <label>Asesor</label>
+            <label>Asesor principal</label>
             <input
               type="text"
-              placeholder="Ejemplo: Carlos López"
               value={loteSeleccionado.asesor || ''}
               onChange={(e) =>
                 actualizarLote(loteSeleccionado.numero, 'asesor', e.target.value)
               }
-              style={{ width: '100%', marginBottom: 10 }}
             />
 
-            <label>Teléfono</label>
+            <label>Teléfono principal</label>
             <input
               type="text"
-              placeholder="Ejemplo: 5555-5555"
               value={loteSeleccionado.telefono || ''}
               onChange={(e) =>
                 actualizarLote(loteSeleccionado.numero, 'telefono', e.target.value)
               }
-              style={{ width: '100%', marginBottom: 15 }}
-
-              
             />
 
-            <h3>Asesores adicionales</h3>
+            <h3>👥 Asesores adicionales</h3>
 
-{(loteSeleccionado.asesores || []).map((asesor, index) => (
-  <div
-    key={index}
-    style={{
-      border: '1px solid #ddd',
-      borderRadius: 8,
-      padding: 10,
-      marginBottom: 10,
-    }}
-  >
-    <label>Nombre del asesor</label>
-    <input
-      type="text"
-      value={asesor.nombre || ''}
-      onChange={(e) =>
-        actualizarAsesor(index, 'nombre', e.target.value)
-      }
-      style={{ width: '100%', marginBottom: 8 }}
-    />
+            {(loteSeleccionado.asesores || []).map((asesor, index) => (
+              <div className="asesor-edit-card" key={index}>
+                <label>Nombre</label>
+                <input
+                  type="text"
+                  value={asesor.nombre || ''}
+                  onChange={(e) =>
+                    actualizarAsesor(index, 'nombre', e.target.value)
+                  }
+                />
 
-    <label>Teléfono del asesor</label>
-    <input
-      type="text"
-      value={asesor.telefono || ''}
-      onChange={(e) =>
-        actualizarAsesor(index, 'telefono', e.target.value)
-      }
-      style={{ width: '100%', marginBottom: 8 }}
-    />
+                <label>Teléfono</label>
+                <input
+                  type="text"
+                  value={asesor.telefono || ''}
+                  onChange={(e) =>
+                    actualizarAsesor(index, 'telefono', e.target.value)
+                  }
+                />
 
-    <button onClick={() => eliminarAsesor(index)}>
-      🗑️ Quitar asesor
-    </button>
-  </div>
-))}
+                <button onClick={() => eliminarAsesor(index)}>
+                  🗑️ Quitar asesor
+                </button>
+              </div>
+            ))}
 
-<button
-  onClick={agregarAsesor}
-  style={{ marginBottom: 15 }}
->
-  ➕ Agregar asesor
-</button>
+            <button onClick={agregarAsesor}>➕ Agregar asesor</button>
 
             <label>Observaciones</label>
             <textarea
-              placeholder="Ejemplo: Cliente interesado, pendiente de papelería..."
               value={loteSeleccionado.observaciones || ''}
               onChange={(e) =>
                 actualizarLote(
@@ -263,51 +284,32 @@ function ModalLote({
                   e.target.value
                 )
               }
-              style={{
-                width: '100%',
-                marginBottom: 15,
-                minHeight: 80,
-              }}
             />
-          </>
+          </div>
         )}
 
         {puedeCambiarEstado && (
-          <>
+          <div className="section-card">
             <label>Estado</label>
             <select
               value={loteSeleccionado.estado}
               onChange={(e) =>
                 actualizarLote(loteSeleccionado.numero, 'estado', e.target.value)
               }
-              style={{ width: '100%', marginBottom: 15 }}
             >
               <option value="libre">Libre</option>
               <option value="reservado">Reservado</option>
               <option value="vendido">Vendido</option>
             </select>
-          </>
+          </div>
         )}
 
-        {!usuario && <p>Para más información comunícate con el asesor.</p>}
-
         {esAdmin && (
-          <>
-            <h3>Modificar esquinas</h3>
-            <p style={{ fontSize: 13 }}>
-              Puedes cambiar los valores aquí o arrastrar los puntos azules en el mapa.
-            </p>
+          <div className="admin-edit-card">
+            <h3>📍 Modificar esquinas</h3>
 
             {loteSeleccionado.puntos.map((p, i) => (
-              <div
-                key={i}
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '90px 1fr 1fr',
-                  gap: 8,
-                  marginBottom: 8,
-                }}
-              >
+              <div className="corner-grid" key={i}>
                 <span>Esquina {i + 1}</span>
 
                 <input
@@ -330,31 +332,34 @@ function ModalLote({
               </div>
             ))}
 
-            <br />
-
             <button
               onClick={() => eliminarLote(loteSeleccionado.numero)}
-              style={{
-                background: '#e74c3c',
-                color: 'white',
-                marginRight: 10,
-              }}
+              className="btn-danger"
             >
               🗑️ Eliminar lote
             </button>
-          </>
+          </div>
         )}
 
-        {usuario && (
-          <button
-            onClick={generarPDFLote}
-            style={{ marginRight: 10, marginBottom: 10 }}
-          >
-            📄 Descargar ficha PDF
-          </button>
+        {!usuario && (
+          <p className="public-message">
+            Para más información comunícate con el asesor.
+          </p>
         )}
 
-        <button onClick={() => setLoteSeleccionado(null)}>Cerrar</button>
+        <div className="modal-actions">
+          {usuario && (
+            <button onClick={generarPDFLote}>📄 Descargar PDF</button>
+          )}
+
+          {puedeCambiarEstado && (
+            <button onClick={compartirWhatsApp}>
+              📲 Compartir WhatsApp
+            </button>
+          )}
+
+          <button onClick={() => setLoteSeleccionado(null)}>Cerrar</button>
+        </div>
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ function MapaLotes({
   setZoomMapa,
 }) {
   return (
-    <div style={{ width: '95%', maxWidth: '1000px', margin: 'auto' }}>
+    <div className="map-section">
       <div style={{ marginBottom: 10 }}>
         <button onClick={() => setZoomMapa(Math.max(1, zoomMapa - 0.25))}>
           ➖

@@ -776,38 +776,40 @@ function generarPDFLote() {
         </div>
       )}
 
-      <h1>🏘️ DR Maps</h1>
+      <header className="app-header">
+  <div className="app-logo">🏘️</div>
 
-      <div style={{ marginBottom: 12 }}>
-        <label>Proyecto: </label>
+  <div>
+    <h1>DR Maps</h1>
+    <p>Sistema inteligente para gestión de lotificaciones</p>
+  </div>
+</header>
 
-        <select
-          value={proyectoActual.id}
-          onChange={(e) => setProyectoActualId(e.target.value)}
-        >
-          {proyectos.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.nombre}
-            </option>
-          ))}
-        </select>
+      <section className="project-panel">
+  <div className="project-selector">
+    <label>Proyecto</label>
 
-        {esAdmin && (
-          <>
-            <button onClick={crearProyecto} style={{ marginLeft: 8 }}>
-              ➕ Nuevo proyecto
-            </button>
+    <select
+      value={proyectoActual.id}
+      onChange={(e) => setProyectoActualId(e.target.value)}
+    >
+      {proyectos.map((p) => (
+        <option key={p.id} value={p.id}>
+          {p.nombre}
+        </option>
+      ))}
+    </select>
+  </div>
 
-            <button onClick={eliminarProyecto} style={{ marginLeft: 8 }}>
-              🗑️ Eliminar proyecto
-            </button>
+  {esAdmin && (
+    <div className="admin-actions">
+      <button onClick={crearProyecto}>➕ Nuevo proyecto</button>
+      <button onClick={eliminarProyecto}>🗑️ Eliminar proyecto</button>
+      <button onClick={cargarHistorial}>📜 Ver historial</button>
+    </div>
+  )}
 
-            <button onClick={cargarHistorial} style={{ marginLeft: 8 }}>
-              📜 Ver historial
-            </button>
-          </>
-        )}
-      </div>
+</section>
 
       <h2>{proyectoActual.nombre}</h2>
 
@@ -868,22 +870,25 @@ function generarPDFLote() {
         )}
       </div>
 
-      <p>
-        {esAdmin && modoEditor
-          ? 'Haz clic en las esquinas del lote. Luego presiona Finalizar lote.'
-          : 'Vista pública: consulta disponibilidad de lotes.'}
-      </p>
+      <section className="search-panel">
+  <p>
+    {esAdmin && modoEditor
+      ? 'Haz clic en las esquinas del lote. Luego presiona Finalizar lote.'
+      : 'Vista pública: consulta disponibilidad de lotes.'}
+  </p>
 
-      <div style={{ marginBottom: 15 }}>
-        🟢 Libre &nbsp;&nbsp; 🟡 Reservado &nbsp;&nbsp; 🔴 Vendido
-      </div>
+  <div className="status-legend">
+    <span><b className="dot libre"></b> Libre</span>
+    <span><b className="dot reservado"></b> Reservado</span>
+    <span><b className="dot vendido"></b> Vendido</span>
+  </div>
 
-
-        <BuscadorLote
-          busquedaLote={busquedaLote}
-          setBusquedaLote={setBusquedaLote}
-          buscarLote={buscarLote}
-        />
+  <BuscadorLote
+    busquedaLote={busquedaLote}
+    setBusquedaLote={setBusquedaLote}
+    buscarLote={buscarLote}
+  />
+</section>
 
 
       <MapaLotes
@@ -917,6 +922,7 @@ function generarPDFLote() {
     moverPunto={moverPunto}
     eliminarLote={eliminarLote}
     generarPDFLote={generarPDFLote}
+    proyectoActual={proyectoActual}
   />
 )}
     
