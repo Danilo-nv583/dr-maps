@@ -1,3 +1,6 @@
+import { branding } from '../config/branding';
+
+
 function ModalLote({
   loteSeleccionado,
   setLoteSeleccionado,
@@ -70,7 +73,7 @@ ${asesores ? `Asesores:\n${asesores}` : ''}
 
 ${loteSeleccionado.observaciones ? `📝 Observaciones: ${loteSeleccionado.observaciones}` : ''}
 
-Consulta disponibilidad en DR Maps.
+${branding.fraseCierreWhatsapp}
 `.trim();
 
 const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(mensaje)}`;

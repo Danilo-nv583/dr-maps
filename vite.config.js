@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import { branding } from './src/config/branding.js';
 
 export default defineConfig({
   plugins: [
@@ -10,9 +11,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
 
       manifest: {
-        name: 'DR Maps',
-        short_name: 'DR Maps',
-        description: 'Sistema de control de lotes para lotificadoras',
+        name: branding.nombreSistema,
+        short_name: branding.nombreCorto,
+        description: branding.subtitulo,
         theme_color: '#ffffff',
         background_color: '#ffffff',
         display: 'standalone',

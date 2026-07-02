@@ -7,6 +7,7 @@ import HistorialModal from './components/HistorialModal';
 import BuscadorLote from './components/BuscadorLote';
 import MapaLotes from './components/MapaLotes';
 import ModalLote from './components/ModalLote';
+import { branding } from './config/branding';
 
 
 
@@ -35,8 +36,14 @@ const [historial, setHistorial] = useState([]);
   const [proyectos, setProyectos] = useState(proyectosIniciales);
 
   const [proyectoActualId, setProyectoActualId] = useState(() => {
+    
     return localStorage.getItem('drmaps-proyecto-actual') || 'el-tejar';
   });
+
+   useEffect(() => {
+    document.title = branding.nombreSistema;
+  }, []);
+
 
   const proyectoActual =
   
@@ -768,7 +775,7 @@ function exportarHistorialPDF() {
   const doc = new jsPDF();
 
   doc.setFontSize(20);
-  doc.text('DR Maps', 20, 20);
+  doc.text(branding.nombreSistema, 20, 20);
 
   doc.setFontSize(14);
   doc.text('Historial de cambios', 20, 35);
@@ -884,10 +891,10 @@ function generarPDFLote() {
 
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(22);
-  doc.text('DR Maps', 20, 27);
+ doc.text(branding.nombreSistema, 20, 27);
 
   doc.setFontSize(10);
-  doc.text('Sistema inteligente para gestion de lotificaciones', 20, 36);
+doc.text(branding.subtitulo, 20, 36);
 
   // Título ficha
   doc.setTextColor(30, 41, 59);
@@ -1028,7 +1035,7 @@ function generarPDFLote() {
   doc.setFontSize(9);
   doc.setTextColor(100, 116, 139);
   doc.text(
-    'Documento generado automaticamente por DR Maps.',
+    branding.textoPiePDF,
     105,
     285,
     { align: 'center' }
@@ -1114,12 +1121,12 @@ function generarPDFLote() {
         </div>
       )}
 
-      <header className="app-header">
+     <header className="app-header">
   <div className="app-logo">🏘️</div>
 
   <div>
-    <h1>DR Maps</h1>
-    <p>Sistema inteligente para gestión de lotificaciones</p>
+    <h1>{branding.nombreSistema}</h1>
+    <p>{branding.subtitulo}</p>
   </div>
 </header>
 
