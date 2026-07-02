@@ -323,33 +323,26 @@ h2{
     max-height:90vh;
     overflow:auto;
     background:rgba(255,255,255,.92);
-
-      backdrop-filter:blur(14px);
+    backdrop-filter:blur(14px);
     border-radius:26px;
     padding:24px;
     box-shadow:0 25px 60px rgba(0,0,0,.35);
-    animation:fadeIn .35s ease;
-
-    @keyframes modalShow{
-
-0%{
-
-opacity:0;
-
-transform:translateY(35px) scale(.95);
-
+    animation:modalShow .35s ease;
 }
 
-100%{
 
-opacity:1;
+@keyframes modalShow{
+    0%{
+        opacity:0;
+        transform:translateY(35px) scale(.95);
+    }
 
-transform:translateY(0) scale(1);
-
+    100%{
+        opacity:1;
+        transform:translateY(0) scale(1);
+    }
 }
 
-}
-}
 
 .modal-header{
     display:flex;
