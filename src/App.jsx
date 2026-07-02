@@ -1130,31 +1130,36 @@ doc.text(branding.subtitulo, 20, 36);
   </div>
 </header>
 
-      <section className="project-panel">
-  <div className="project-selector">
-    <label>Proyecto</label>
+   {(esAdmin || (branding.mostrarSelectorProyecto && proyectos.length > 1)) && (
+  <section className="project-panel">
+    {(esAdmin && proyectos.length > 1) ||
+    (branding.mostrarSelectorProyecto && proyectos.length > 1) ? (
+      <div className="project-selector">
+        <label>Proyecto</label>
 
-    <select
-      value={proyectoActual.id}
-      onChange={(e) => setProyectoActualId(e.target.value)}
-    >
-      {proyectos.map((p) => (
-        <option key={p.id} value={p.id}>
-          {p.nombre}
-        </option>
-      ))}
-    </select>
-  </div>
+        <select
+          value={proyectoActual.id}
+          onChange={(e) => setProyectoActualId(e.target.value)}
+        >
+          {proyectos.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.nombre}
+            </option>
+          ))}
+        </select>
+      </div>
+    ) : null}
 
-  {esAdmin && (
-    <div className="admin-actions">
-      <button onClick={crearProyecto}>➕ Nuevo proyecto</button>
-      <button onClick={eliminarProyecto}>🗑️ Eliminar proyecto</button>
-      <button onClick={cargarHistorial}>📜 Ver historial</button>
-    </div>
-  )}
+    {esAdmin && (
+      <div className="admin-actions">
+        <button onClick={crearProyecto}>➕ Nuevo proyecto</button>
+        <button onClick={eliminarProyecto}>🗑️ Eliminar proyecto</button>
+        <button onClick={cargarHistorial}>📜 Ver historial</button>
+      </div>
+    )}
+  </section>
+)}
 
-</section>
 
       <h2>{proyectoActual.nombre}</h2>
 

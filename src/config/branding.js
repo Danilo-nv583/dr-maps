@@ -6,6 +6,8 @@ export const branding = {
   desarrolladoPor: 'DR Maps',
   mostrarDesarrollador: true,
 
+  mostrarSelectorProyecto: true,
+
   colorPrincipalHex: '#1e40af',
   colorPrincipalRGB: [30, 64, 175],
 
